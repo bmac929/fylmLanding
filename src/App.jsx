@@ -15,7 +15,7 @@ import BlogSuggestions from './pages/BlogSuggestions.jsx';
 import SubmitFilmIdea from './pages/SubmitFilmIdea.jsx';
 import AdminFilmIdeas from './pages/AdminFilmIdeas.jsx';
 import SubmissionHome from './pages/submissionFlow/SubmissionHome.jsx';
-import SubmissionInfo from './pages/submissionFlow/SubmissionBasicInfo.jsx';
+import SubmissionInfo from './pages/submissionFlow/submissionBasicInfo.jsx';
 import SubmissionLink from './pages/submissionFlow/SubmissionLink.jsx';
 import SubmissionProduction from './pages/submissionFlow/SubmissionProduction.jsx';
 import PaymentOptions from './pages/submissionFlow/PaymentOptions.jsx';
