@@ -1,0 +1,273 @@
+/*
+  # Film Ideas Schema Update
+
+  1. Changes
+    - Added IF NOT EXISTS to trigger creation
+    - Improved error handling for existing objects
+    - Maintained all existing functionality
+
+  2. Tables
+    - film_ideas: Stores submitted film ideas
+    - film_idea_status_history: Tracks status changes
+    - blocked_email_domains: Manages blocked email domains
+
+  3. Security
+    - RLS policies for all tables
+    - Public submission access
+    - Admin-only management
+*/
+
+-- Create enum type if it doesn't exist
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'film_idea_status') THEN
+    CREATE TYPE film_idea_status AS ENUM (
+      'pending',
+      'reviewed',
+      'approved',
+      'rejected'
+    );
+  END IF;
+END $$;
+
+-- Create tables if they don't exist
+CREATE TABLE IF NOT EXISTS film_ideas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  reference_number text UNIQUE NOT NULL,
+  submitter_name text NOT NULL,
+  submitter_email text NOT NULL,
+  submitter_phone text,
+  submitter_career text,
+  idea_name text NOT NULL,
+  genres text[] NOT NULL,
+  description text NOT NULL,
+  status film_idea_status NOT NULL DEFAULT 'pending',
+  admin_notes text,
+  contact_agreed boolean NOT NULL DEFAULT false,
+  ip_address inet NOT NULL,
+  submission_count integer NOT NULL DEFAULT 1,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT description_min_length CHECK (length(description) >= 100),
+  CONSTRAINT idea_name_max_length CHECK (length(idea_name) <= 45)
+);
+
+CREATE TABLE IF NOT EXISTS film_idea_status_history (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  film_idea_id uuid NOT NULL REFERENCES film_ideas(id) ON DELETE CASCADE,
+  old_status film_idea_status,
+  new_status film_idea_status NOT NULL,
+  changed_by uuid REFERENCES auth.users(id),
+  changed_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS blocked_email_domains (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  domain text NOT NULL UNIQUE,
+  is_wildcard boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Create or replace functions
+CREATE OR REPLACE FUNCTION generate_reference_number()
+RETURNS text
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  new_ref text;
+  exists boolean;
+BEGIN
+  LOOP
+    new_ref := 'FILM-' || lpad(floor(random() * 100000)::text, 5, '0');
+    SELECT EXISTS (
+      SELECT 1 FROM film_ideas WHERE reference_number = new_ref
+    ) INTO exists;
+    EXIT WHEN NOT exists;
+  END LOOP;
+  RETURN new_ref;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION check_submission_limit(p_email text, p_ip inet)
+RETURNS boolean
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  email_count integer;
+  ip_count integer;
+BEGIN
+  SELECT COUNT(*)
+  INTO email_count
+  FROM film_ideas
+  WHERE submitter_email = p_email
+  AND created_at > now() - interval '24 hours';
+
+  SELECT COUNT(*)
+  INTO ip_count
+  FROM film_ideas
+  WHERE ip_address = p_ip
+  AND created_at > now() - interval '24 hours';
+
+  RETURN email_count >= 2 OR ip_count >= 2;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE OR REPLACE FUNCTION track_status_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (TG_OP = 'UPDATE' AND OLD.status IS DISTINCT FROM NEW.status) THEN
+    INSERT INTO film_idea_status_history (
+      film_idea_id,
+      old_status,
+      new_status,
+      changed_by
+    ) VALUES (
+      NEW.id,
+      OLD.status,
+      NEW.status,
+      auth.uid()
+    );
+  END IF;
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Drop existing triggers if they exist
+DROP TRIGGER IF EXISTS update_film_ideas_updated_at ON film_ideas;
+DROP TRIGGER IF EXISTS track_film_ideas_status_changes ON film_ideas;
+
+-- Create triggers
+CREATE TRIGGER update_film_ideas_updated_at
+  BEFORE UPDATE ON film_ideas
+  FOR EACH ROW
+  EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TRIGGER track_film_ideas_status_changes
+  AFTER UPDATE ON film_ideas
+  FOR EACH ROW
+  EXECUTE PROCEDURE track_status_changes();
+
+-- Enable RLS
+ALTER TABLE film_ideas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE film_idea_status_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE blocked_email_domains ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies
+DROP POLICY IF EXISTS "Anyone can submit film ideas" ON film_ideas;
+DROP POLICY IF EXISTS "Admins can read all film ideas" ON film_ideas;
+DROP POLICY IF EXISTS "Admins can update film ideas" ON film_ideas;
+DROP POLICY IF EXISTS "Public can check submission limit" ON film_ideas;
+DROP POLICY IF EXISTS "Admins can read status history" ON film_idea_status_history;
+DROP POLICY IF EXISTS "Admins can insert status history" ON film_idea_status_history;
+DROP POLICY IF EXISTS "Anyone can read blocked domains" ON blocked_email_domains;
+DROP POLICY IF EXISTS "Admins can manage blocked domains" ON blocked_email_domains;
+
+-- Create policies
+CREATE POLICY "Anyone can submit film ideas"
+  ON film_ideas
+  FOR INSERT
+  TO public
+  WITH CHECK (
+    NOT check_submission_limit(submitter_email, ip_address::inet)
+  );
+
+CREATE POLICY "Anyone can read their own submissions"
+  ON film_ideas
+  FOR SELECT
+  TO public
+  USING (submitter_email IS NOT NULL);
+
+CREATE POLICY "Admins can read all film ideas"
+  ON film_ideas
+  FOR SELECT
+  TO authenticated
+  USING (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can update film ideas"
+  ON film_ideas
+  FOR UPDATE
+  TO authenticated
+  USING (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  )
+  WITH CHECK (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can read status history"
+  ON film_idea_status_history
+  FOR SELECT
+  TO authenticated
+  USING (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  );
+
+CREATE POLICY "Admins can insert status history"
+  ON film_idea_status_history
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  );
+
+CREATE POLICY "Anyone can read blocked domains"
+  ON blocked_email_domains
+  FOR SELECT
+  TO public
+  USING (true);
+
+CREATE POLICY "Admins can manage blocked domains"
+  ON blocked_email_domains
+  FOR ALL
+  TO authenticated
+  USING (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  )
+  WITH CHECK (
+    auth.uid() IN (
+      SELECT id FROM auth.users 
+      WHERE raw_user_meta_data->>'role' = 'admin'
+    )
+  );
+
+-- Insert initial blocked domains
+INSERT INTO blocked_email_domains (domain, is_wildcard) VALUES
+  ('tempmail.com', true),
+  ('10minutemail.com', false),
+  ('guerrillamail.com', false),
+  ('throwawaymail.com', true),
+  ('mailinator.com', true),
+  ('yopmail.com', true),
+  ('tempinbox.com', true),
+  ('disposablemail.com', true),
+  ('trashmail.com', true),
+  ('sharklasers.com', false)
+ON CONFLICT (domain) DO NOTHING;

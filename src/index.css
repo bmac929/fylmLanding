@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Figtree', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-primary text-gray-100;
+  }
+
+  h1 {
+    @apply text-4xl md:text-[36px] font-bold;
+  }
+
+  h2 {
+    @apply text-3xl md:text-[32px] font-bold;
+  }
+
+  h3 {
+    @apply text-2xl md:text-[28px] font-semibold;
+  }
+
+  .body-large {
+    @apply text-base md:text-[19px];
+  }
+
+  .body-normal {
+    @apply text-sm md:text-[15px];
+  }
+
+  .text-small {
+    @apply text-xs md:text-[13px];
+  }
+
+  .text-tiny {
+    @apply text-[10px] md:text-[11px];
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-secondary text-primary font-semibold rounded-lg 
+           transition-all duration-300 hover:bg-secondary/90 focus:ring-2 
+           focus:ring-secondary/50 focus:outline-none;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-tertiary text-white font-semibold rounded-lg 
+           transition-all duration-300 hover:bg-tertiary/90 focus:ring-2 
+           focus:ring-tertiary/50 focus:outline-none;
+  }
+
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .writing-mode-vertical {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+  }
+
+  .writing-mode-horizontal {
+    writing-mode: horizontal-tb;
+  }
+}
+
+/* Custom Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.6s ease-out forwards;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Loading Animation */
+.loading-bar {
+  @apply fixed top-0 left-0 h-1 bg-secondary;
+  animation: loading 2s ease-in-out infinite;
+  width: 0%;
+}
+
+@keyframes loading {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 100%; }
+}
+
+/* Logo Animation */
+.logo-animation {
+  animation: pulse 0.5s ease-in-out;
+}
+
+.logo-glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* React Select Custom Styling */
+.react-select-container .react-select__multi-value {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.react-select-container .react-select__multi-value__label {
+  color: black;
+}
+
+.react-select-container .react-select__multi-value__remove {
+  color: black;
+}
+
+.react-select-container .react-select__multi-value__remove:hover {
+  background-color: rgba(255, 0, 0, 0.2);
+  color: red;
+}
+
+/* Dropdown menu styling */
+.react-select-container .react-select__menu {
+  background-color: white;
+}
+
+.react-select-container .react-select__option {
+  color: black;
+}
+
+.react-select-container .react-select__menu-list {
+  color: black;
+}
+
+.react-select-container .react-select__input {
+  color: black;
+}
+
+.react-select-container .react-select__single-value {
+  color: black;
+}
+
+.react-select-container .react-select__option--is-focused {
+  background-color: rgba(253, 164, 0, 0.1);
+}
+
+.react-select-container .react-select__option--is-selected {
+  background-color: rgba(253, 164, 0, 0.3);
+}
+
+/* Fix for control input text color */
+.react-select-container .react-select__control input {
+  color: black !important;
+}
+
+/* Fix for placeholder color */
+.react-select-container .react-select__placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
