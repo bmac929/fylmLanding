@@ -165,6 +165,14 @@ app.post('/genre', async (req, res) => {
   }
 });
 
+// Serve frontend static files
+app.use(express.static(join(__dirname, 'dist')));
+
+// Fallback for React Router (handles direct browser visits)
+app.get('*', (req, res) => {
+  res.sendFile(join(__dirname, 'dist', 'index.html'));
+});
+
 
 // --- Start the server ---
 const PORT = process.env.PORT || 3002;
