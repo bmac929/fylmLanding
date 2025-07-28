@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 
 // --- Initialize the Admin SDK ---
 const serviceAccount = JSON.parse(
-    readFileSync(join(__dirname, '../../code/fylmtv-f9f51-firebase-adminsdk-fbsvc-49e5e9b379.json'), 'utf8')
+    process.env.FIREBASE_CONFIG
   );
 
 admin.initializeApp({
