@@ -92,7 +92,7 @@ export default function PaymentOptions({ onNextStep }){
 
     console.log(film);
     try{
-      const response = await axios.post(`${process.env.VITE_API_BASE_URL}/film`, film);
+      const response = await axios.post(`/film`, film);
       console.log('Submission successful:', response.data);
       navigate('/submit/submissioncomplete');
   
