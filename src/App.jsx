@@ -32,22 +32,22 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route  path="/submit/submission" element={<SubmissionHome />} />
-            <Route  path="/submit/submissioninfo" element={<SubmissionInfo />} />
-            <Route  path="/submit/submissionlinks" element={<SubmissionLink />} />
-            <Route  path="/submit/submissionproduction" element={<SubmissionProduction />} />
-            <Route  path="/submit/paymentoptions" element={<PaymentOptions />} />
-            <Route  path="/submit/submissioncomplete" element={<SubmissionComplete />} />
+            <Route path="/submit/submission" element={<SubmissionHome />} />
+            <Route path="/submit/submissioninfo" element={<SubmissionInfo />} />
+            <Route path="/submit/submissionlinks" element={<SubmissionLink />} />
+            <Route path="/submit/submissionproduction" element={<SubmissionProduction />} />
+            <Route path="/submit/paymentoptions" element={<PaymentOptions />} />
+            <Route path="/submit/submissioncomplete" element={<SubmissionComplete />} />
             <Route path="/quiz" element={<GenreQuiz />} />
             <Route path="/quiz/results/:genres" element={<GenreQuiz />} />
             <Route path="/festivals" element={<FilmFestival />} />
             <Route path="/festival-registration" element={<FestivalRegistration />} />
             <Route path="/blogs" element={<BlogList />} />
             <Route path="/blogs/new" element={<BlogEdit />} />
+            <Route path="/blogs/suggestions" element={<BlogSuggestions />} />
+            <Route path="/blogs/:slug/preview" element={<BlogPreview />} />
             <Route path="/blogs/:slug/edit" element={<BlogEdit />} />
             <Route path="/blogs/:slug" element={<BlogView />} />
-            <Route path="/blogs/:slug/preview" element={<BlogPreview />} />
-            <Route path="/blogs/suggestions" element={<BlogSuggestions />} />
             <Route path="/submit-idea" element={<SubmitFilmIdea />} />
             <Route path="/admin/film-ideas" element={<AdminFilmIdeas />} />
           </Routes>
