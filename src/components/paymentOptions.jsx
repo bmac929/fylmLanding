@@ -24,6 +24,7 @@ export default function PaymentOptions({ onNextStep }){
     const savedPayment = localStorage.getItem('payment');
     if (savedPayment) {
       setSelectedPayment(savedPayment);
+      console.log(URL);
     }
   }, []);
 
