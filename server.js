@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import express from 'express';
 import cors from 'cors';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import axios from 'axios';
@@ -14,20 +14,45 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// --- Initialize the Admin SDK ---
-const serviceAccount = JSON.parse(
-    process.env.FIREBASE_CONFIG
-  );
-
-serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+// Add error handling for uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
 });
-const db = admin.firestore();
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+// --- Initialize the Admin SDK ---
+let db = null;
+try {
+  const serviceAccount = JSON.parse(
+      process.env.FIREBASE_CONFIG
+    );
+
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+  db = admin.firestore();
+  console.log('Firebase Admin SDK initialized successfully');
+} catch (error) {
+  console.error('Error initializing Firebase Admin SDK:', error);
+  // Continue without Firebase if it's not configured
+}
 // --- End Admin SDK Initialization ---
 
 const app = express();
+
+// Add error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Express error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(cors()); // Allow requests from different origins (adjust options for production)
 
@@ -52,6 +77,10 @@ async function verifyRecaptcha(token) {
 app.post('/film', async (req, res) => {
   console.log('hit back end!!!!');
   try {
+    if (!db) {
+      return res.status(500).send({ message: 'Database not initialized' });
+    }
+
     // Get the data sent from the frontend from the request body
     const { link, linkPassword, rating, duration, submitter, subtitlesPassword, subtitles, title, trailer, trailerPassword, warning, productionYear, art, genre, description, cast, awards, payment, id, recaptchaToken } = req.body;
 
@@ -112,6 +141,10 @@ app.post('/film', async (req, res) => {
 app.post('/users', async (req, res) => {
   console.log('hit users back end!!!!');
   try {
+    if (!db) {
+      return res.status(500).send({ message: 'Database not initialized' });
+    }
+
     const { name, email, role } = req.body;
     console.log('Received data:', { name, email, role });
 
@@ -140,6 +173,10 @@ app.post('/users', async (req, res) => {
 app.post('/genre', async (req, res) => {
   console.log('hit genre back end!!!!');
   try {
+    if (!db) {
+      return res.status(500).send({ message: 'Database not initialized' });
+    }
+
     const { email, friendEmail, genre } = req.body;
     console.log('Received data:', { email, friendEmail, genre });
 
@@ -165,18 +202,33 @@ app.post('/genre', async (req, res) => {
   }
 });
 
-// Serve frontend static files
-app.use(express.static(join(__dirname, 'dist')));
+// Serve static files from the dist directory
+const distPath = join(__dirname, 'dist');
+if (existsSync(distPath)) {
+  app.use(express.static(distPath));
+  console.log('Static files will be served from:', distPath);
+} else {
+  console.warn('Dist directory not found:', distPath);
+}
 
-// Fallback for React Router (handles direct browser visits)
+// Handle all other routes by serving the index.html file
 app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'dist', 'index.html'));
+  console.log('Serving index.html for route:', req.path);
+  const indexPath = join(__dirname, 'dist', 'index.html');
+  
+  if (existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    console.error('index.html not found at:', indexPath);
+    res.status(404).send('Application not built. Please run npm run build first.');
+  }
 });
-
 
 // --- Start the server ---
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Backend server listening on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Node version: ${process.version}`);
 });
 
