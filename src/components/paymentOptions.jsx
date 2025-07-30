@@ -17,6 +17,7 @@ export default function PaymentOptions({ onNextStep }){
   const [selectedPayment, setSelectedPayment] = useState('');
   const [recaptchaToken, setRecaptchaToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const URL = process.env.VITE_API_BASE_URL;
   
   // Load saved payment option on component mount
   React.useEffect(() => {
@@ -92,7 +93,7 @@ export default function PaymentOptions({ onNextStep }){
 
     console.log(film);
     try{
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/film`, film);
+      const response = await axios.post(`${URL}/film`, film);
       console.log('Submission successful:', response.data);
       navigate('/submit/submissioncomplete');
   
