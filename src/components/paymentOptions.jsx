@@ -13,6 +13,7 @@ import SaveAndExit from './SaveAndExit';
 import { saveStepProgress, clearSubmissionProgress } from '../utils/submissionStorage';
 
 export default function PaymentOptions({ onNextStep }){
+  // Updated to handle Vercel deployment with Render backend
   const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState('');
   const [recaptchaToken, setRecaptchaToken] = useState('');
@@ -23,12 +24,23 @@ export default function PaymentOptions({ onNextStep }){
     const envUrl = import.meta.env.VITE_API_BASE_URL;
     console.log('Environment variable VITE_API_BASE_URL:', envUrl);
     console.log('All Vite env variables:', import.meta.env);
+    console.log('Is production?', import.meta.env.PROD);
+    
     if (envUrl) {
+      console.log('Using environment variable URL:', envUrl);
       return envUrl;
     }
-    // Fallback to current origin (works for both dev and production)
-    const fallbackUrl = window.location.origin;
-    console.log('Using fallback URL:', fallbackUrl);
+    
+    // For Vercel deployment, use the Render API URL
+    if (import.meta.env.PROD) {
+      const prodUrl = 'https://fylmlanding.onrender.com';
+      console.log('Using production URL:', prodUrl);
+      return prodUrl;
+    }
+    
+    // For development, use localhost
+    const fallbackUrl = 'http://localhost:3002';
+    console.log('Using development fallback URL:', fallbackUrl);
     return fallbackUrl;
   };
   
