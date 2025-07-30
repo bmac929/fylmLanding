@@ -9,6 +9,24 @@ export default function PrelaunchForm() {
     role: ''
   });
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Get API URL - use environment variable or fallback
+  const getApiUrl = () => {
+    const envUrl = import.meta.env.VITE_API_BASE_URL;
+    
+    if (envUrl) {
+      return envUrl;
+    }
+    
+    // For Vercel deployment, use the Render API URL
+    if (import.meta.env.PROD) {
+      return 'https://fylmlanding.onrender.com';
+    }
+    
+    // For development, use localhost
+    return 'http://localhost:3002';
+  };
 
   React.useEffect(() => {
     const handleSetRole = (event) => {
@@ -21,21 +39,25 @@ export default function PrelaunchForm() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsSubmitting(true);
 
-    let data={
+    let data = {
       name: formData.name,
       email: formData.email,
       role: formData.role
     };
 
     try {
-      const response = axios.post(`${import.meta.env.VITE_API_BASE_URL}/users`, data);
-      console.log('Form submitted successfully:', response.data);
+      const URL = getApiUrl();
+      const response = await axios.post(`${URL}/users`, data);
+      setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);
+      alert('There was an error submitting your form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,8 +124,12 @@ export default function PrelaunchForm() {
                   </select>
                 </div>
 
-                <button type="submit" className="w-full px-6 py-2 bg-[#fda400] text-white font-semibold rounded-lg transition-all duration-300 hover:bg-[#fda400]/90 focus:ring-2 focus:ring-[#fda400]/50 focus:outline-none">
-                  Sign Up – No Spam, Just Indie Gold
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full px-6 py-2 bg-[#fda400] text-white font-semibold rounded-lg transition-all duration-300 hover:bg-[#fda400]/90 focus:ring-2 focus:ring-[#fda400]/50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Signing Up...' : 'Sign Up – No Spam, Just Indie Gold'}
                 </button>
               </form>
             </>

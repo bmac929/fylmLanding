@@ -22,26 +22,18 @@ export default function PaymentOptions({ onNextStep }){
   // Get API URL - use environment variable or fallback to current origin
   const getApiUrl = () => {
     const envUrl = import.meta.env.VITE_API_BASE_URL;
-    console.log('Environment variable VITE_API_BASE_URL:', envUrl);
-    console.log('All Vite env variables:', import.meta.env);
-    console.log('Is production?', import.meta.env.PROD);
     
     if (envUrl) {
-      console.log('Using environment variable URL:', envUrl);
       return envUrl;
     }
     
     // For Vercel deployment, use the Render API URL
     if (import.meta.env.PROD) {
-      const prodUrl = 'https://fylmlanding.onrender.com';
-      console.log('Using production URL:', prodUrl);
-      return prodUrl;
+      return 'https://fylmlanding.onrender.com';
     }
     
     // For development, use localhost
-    const fallbackUrl = 'http://localhost:3002';
-    console.log('Using development fallback URL:', fallbackUrl);
-    return fallbackUrl;
+    return 'http://localhost:3002';
   };
   
   const URL = getApiUrl();
@@ -51,7 +43,6 @@ export default function PaymentOptions({ onNextStep }){
     const savedPayment = localStorage.getItem('payment');
     if (savedPayment) {
       setSelectedPayment(savedPayment);
-      console.log('API URL:', URL);
     }
   }, [URL]);
 
@@ -119,17 +110,14 @@ export default function PaymentOptions({ onNextStep }){
       recaptchaToken: recaptchaToken
     }
 
-    console.log(film);
     try{
       const response = await axios.post(`${URL}/film`, film);
-      console.log('Submission successful:', response.data);
       navigate('/submit/submissioncomplete');
   
       // Clear all submission data after successful submission
       clearSubmissionProgress();
       localStorage.clear();
     }catch(err){
-      console.log('Submission error:', err);
       alert("There was an error submitting your film. Please try again.");
     } finally {
       setIsSubmitting(false);
