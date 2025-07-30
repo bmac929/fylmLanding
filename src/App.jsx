@@ -32,12 +32,12 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route exact path="submit/submission" element={<SubmissionHome />} />
-            <Route exact path="submit/submissioninfo" element={<SubmissionInfo />} />
-            <Route exact path="submit/submissionlinks" element={<SubmissionLink />} />
-            <Route exact path="submit/submissionproduction" element={<SubmissionProduction />} />
-            <Route exact path="submit/paymentoptions" element={<PaymentOptions />} />
-            <Route exact path="submit/submissioncomplete" element={<SubmissionComplete />} />
+            <Route  path="/submit/submission" element={<SubmissionHome />} />
+            <Route  path="/submit/submissioninfo" element={<SubmissionInfo />} />
+            <Route  path="/submit/submissionlinks" element={<SubmissionLink />} />
+            <Route  path="/submit/submissionproduction" element={<SubmissionProduction />} />
+            <Route  path="/submit/paymentoptions" element={<PaymentOptions />} />
+            <Route  path="/submit/submissioncomplete" element={<SubmissionComplete />} />
             <Route path="/quiz" element={<GenreQuiz />} />
             <Route path="/quiz/results/:genres" element={<GenreQuiz />} />
             <Route path="/festivals" element={<FilmFestival />} />
