@@ -104,6 +104,9 @@ function App() {
               <Route path="/blogs" element={<BlogList />} />
               <Route path="/blogs/new" element={<BlogEdit />} />
               <Route path="/blogs/suggestions" element={<BlogSuggestions />} />
+              <Route path="/blogs/:slug/preview" element={<BlogPreview />} />
+              <Route path="/blogs/:slug/edit" element={<BlogEdit />} />
+              <Route path="/blogs/:slug" element={<BlogView />} />
               <Route path="/submit-idea" element={<SubmitFilmIdea />} />
               <Route path="/admin/film-ideas" element={<AdminFilmIdeas />} />
               <Route path="*" element={<Navigate to="/" replace />} />

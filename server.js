@@ -28,6 +28,12 @@ process.on('unhandledRejection', (reason, promise) => {
 
 const app = express();
 
+// Add error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Express error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
+
 // Serve static files from the dist directory
 const distPath = join(__dirname, 'dist');
 if (existsSync(distPath)) {
@@ -37,16 +43,6 @@ if (existsSync(distPath)) {
   console.error('Dist directory not found:', distPath);
   process.exit(1);
 }
-
-// Handle all routes by serving index.html
-app.get('*', (req, res) => {
-  const indexPath = join(__dirname, 'dist', 'index.html');
-  if (existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).send('index.html not found');
-  }
-});
 
 // Start the server
 const PORT = process.env.PORT || 3003;
