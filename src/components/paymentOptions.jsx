@@ -17,16 +17,31 @@ export default function PaymentOptions({ onNextStep }){
   const [selectedPayment, setSelectedPayment] = useState('');
   const [recaptchaToken, setRecaptchaToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const URL = process.env.VITE_API_BASE_URL;
+  
+  // Get API URL - use environment variable or fallback to current origin
+  const getApiUrl = () => {
+    const envUrl = import.meta.env.VITE_API_BASE_URL;
+    console.log('Environment variable VITE_API_BASE_URL:', envUrl);
+    console.log('All Vite env variables:', import.meta.env);
+    if (envUrl) {
+      return envUrl;
+    }
+    // Fallback to current origin (works for both dev and production)
+    const fallbackUrl = window.location.origin;
+    console.log('Using fallback URL:', fallbackUrl);
+    return fallbackUrl;
+  };
+  
+  const URL = getApiUrl();
   
   // Load saved payment option on component mount
   React.useEffect(() => {
     const savedPayment = localStorage.getItem('payment');
     if (savedPayment) {
       setSelectedPayment(savedPayment);
-      console.log(URL);
+      console.log('API URL:', URL);
     }
-  }, []);
+  }, [URL]);
 
   const handleBack = () =>{
     navigate('/submit/submissionproduction');
