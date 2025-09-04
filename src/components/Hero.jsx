@@ -32,31 +32,53 @@ const Hero = () => {
 
       <div className="container mx-auto px-4 pt-32 pb-16 lg:min-h-screen lg:flex lg:items-center">
         <div className="max-w-2xl animate-fade-up">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6" >
-            <span className="whitespace-nowrap">Discover great <TypeWriter /> <br />you won't find anywhere else</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+            <span className="whitespace-nowrap">
+              Discover great <TypeWriter /> <br />
+              you won't find anywhere else
+            </span>
           </h1>
           <p className="text-light text-lg md:text-xl mb-8">
-            No overpriced tickets, no endless scrolling—just the best underground cinema, right at your fingertips.
+            Join our community of film lovers to watch, explore, & discuss
+            amazing movies, shorts and films.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button 
+            <button
               className="btn"
-              onClick={() => scrollToForm('viewer')}
+              onClick={() => scrollToForm("viewer")}
               color="tertiary"
-              style={{backgroundColor:"#fda400", color:"#3e1a3e", borderRadius:"10px"}}
+              style={{
+                backgroundColor: "#fda400",
+                color: "#3e1a3e",
+                borderRadius: "10px",
+              }}
             >
               Pre-sign up for Viewers
             </button>
-            <button 
+            <button
               className="btn hover:text-white"
-              onClick={() => scrollToForm('filmmaker')}
-              style={{backgroundColor:"#b0014d", borderRadius:"10px"}}
+              onClick={() => scrollToForm("filmmaker")}
+              style={{ backgroundColor: "#b0014d", borderRadius: "10px" }}
             >
               Pre-sign up for Filmmakers
             </button>
           </div>
         </div>
       </div>
+      <div style={{alignItems:"center", justifyContent:"center", marginTop:"-4%"}}>
+            <a
+              href="https://www.producthunt.com/products/fylm-tv?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-fylm-tv"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1009405&theme=neutral&t=1756159894420"
+                alt="Fylm TV - Stream, connect, & support original film - A filmmakers' hub | Product Hunt"
+                style={{ width: "230px", height: "54px", margin:"auto"}} 
+                
+              />
+            </a>
+          </div>
     </section>
   );
 };

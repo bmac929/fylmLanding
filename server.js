@@ -13,8 +13,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // --- Initialize the Admin SDK ---
 const serviceAccount = JSON.parse(
-    process.env.FIREBASE_CONFIG
-  );
+  readFileSync(join(__dirname, '../fylmtv-f9f51-firebase-adminsdk-fbsvc-49e5e9b379.json'), 'utf8')
+);
 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

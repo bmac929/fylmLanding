@@ -16,47 +16,17 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#support" className="text-light/70 hover:text-secondary transition-colors">
-                  Support
-                </a>
-              </li>
-              <li>
-                <a href="#privacy" className="text-light/70 hover:text-secondary transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
             <h4 className="font-semibold mb-4">Tools</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h5 className="text-sm font-medium text-light/90 mb-2">For Filmmakers</h5>
                 <ul className="space-y-2">
                   <li>
-                    <RouterLink to="/blogs" className="text-light/70 hover:text-secondary transition-colors">
-                      Blogs
-                    </RouterLink>
-                  </li>
-                  <li>
-                    <RouterLink to="/festivals" className="text-light/70 hover:text-secondary transition-colors">
-                      Film Festival
-                    </RouterLink>
-                  </li>
-                  <li>
                     <RouterLink to="/submit-idea" className="text-light/70 hover:text-secondary transition-colors">
                       Submit Film Idea
                     </RouterLink>
                   </li>
-                  <li>
-                    <a href="#crowdfunding" className="text-light/70 hover:text-secondary transition-colors">
-                      Crowdfunding Tips
-                    </a>
-                  </li>
+                  
                   <li>
                     <a href="#filmmaker-membership" className="text-light/70 hover:text-secondary transition-colors font-medium">
                       Win a Filmmaker Membership <span className="text-light/50 text-sm">(at launch)!</span>
@@ -67,24 +37,10 @@ const Footer = () => {
               <div>
                 <h5 className="text-sm font-medium text-light/90 mb-2">For Viewers</h5>
                 <ul className="space-y-2">
-                  <li>
-                    <RouterLink to="/quiz" className="text-light/70 hover:text-secondary transition-colors">
-                      Genre Quiz
-                    </RouterLink>
-                  </li>
+                  
                   <li>
                     <a href="#submit-idea" className="text-light/70 hover:text-secondary transition-colors">
                       Submit a Film Idea
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#indie-quiz" className="text-light/70 hover:text-secondary transition-colors">
-                      Do You Know Indie Films?
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#find-films" className="text-light/70 hover:text-secondary transition-colors">
-                      How to Find Good Films
                     </a>
                   </li>
                   <li>

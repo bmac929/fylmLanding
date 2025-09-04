@@ -1,14 +1,12 @@
 import React from 'react';
-import { Upload, Users2, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const FilmmakerFeature = ({ icon: Icon, title, description }) => (
+const FilmmakerFeature = ({ title, description }) => (
   <div className="bg-dark/30 p-8 rounded-lg backdrop-blur-sm flex flex-col items-center text-center">
     <div className="flex justify-center mb-4">
-      <Icon className="text" size={32} style={{color:"#fda400"}}/>
     </div>
     <div className="flex flex-col flex-grow items-center">
-      <h3 className="text-xl font-semibold mb-4">{title}</h3>
+      <h1 className="text-3xl font-semibold mb-4">{title}</h1>
       <p className="text-light/90">{description}</p>
     </div>
   </div>
@@ -17,17 +15,16 @@ const FilmmakerFeature = ({ icon: Icon, title, description }) => (
 const Filmmakers = () => {
   const features = [
     {
-      icon: Upload,
+      
       title: "Fylm TV",
       description: "Get your film seen, track your audience, and make money—all in one place. Plus, connect your merch and crowdfunding for extra support."
     },
     {
-      icon: Users2,
+      
       title: "Fylm Connect",
       description: "Network with indie filmmakers, actors, and industry pros—collab, hire, or just chat."
     },
     {
-      icon: Wallet,
       title: "Fylm Support",
       description: "Your fans want to support you—let them. Sell merch, crowdfund, and turn your passion into profit."
     }
@@ -62,7 +59,7 @@ const Filmmakers = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <FilmmakerFeature key={index} {...feature} />
+            <FilmmakerFeature key={index} title={feature.title} description={feature.description} />
           ))}
         </div>
       </div>

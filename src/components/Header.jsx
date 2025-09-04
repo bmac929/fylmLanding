@@ -1,10 +1,11 @@
 import React from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [activeDropdown, setActiveDropdown] = React.useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -42,6 +43,23 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const handleDropdownToggle = (dropdown) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
+  };
+
+  const handleViewerFormClick = () => {
+    // Replace with your actual Google Form URL
+    window.open('https://forms.gle/wcZCtXfAfXe3PZD57', '_blank');
+    setActiveDropdown(null);
+    setIsMenuOpen(false);
+  };
+
+  const handleFilmmakerFormClick = () => {
+    window.open('https://forms.gle/YT3BfB1EgLzfUsHN6', '_blank');
+    setActiveDropdown(null);
+    setIsMenuOpen(false);
+  };
+
   return (
     <header
       className="fixed w-full z-50 transition-all duration-300"
@@ -63,18 +81,51 @@ const Header = () => {
             >
               About
             </button>
-            <button 
-              onClick={() => handleNavigation('viewers')}
-              className="text-white hover:text-secondary transition-colors"
-            >
-              Viewers
-            </button>
-            <button 
-              onClick={() => handleNavigation('filmmakers')}
-              className="text-white hover:text-secondary transition-colors"
-            >
-              Filmmakers
-            </button>
+            
+            {/* Viewers Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => handleDropdownToggle('viewers')}
+                className="text-white hover:text-secondary transition-colors flex items-center"
+              >
+                Viewers
+                <ChevronDown size={16} className="ml-1" />
+              </button>
+              {activeDropdown === 'viewers' && (
+                <div className="absolute top-full left-0 mt-2 w-64 rounded-lg shadow-lg py-2 z-50" style={{backgroundColor: '#3f1b3f'}}>
+                  <button
+                    onClick={handleViewerFormClick}
+                    className="w-full text-left px-4 py-2 hover:bg-black/20 transition-colors"
+                    style={{color: '#fda400'}}
+                  >
+                      <strong>Win a Viewer Membership!</strong> (at launch)
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Filmmakers Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => handleDropdownToggle('filmmakers')}
+                className="text-white hover:text-secondary transition-colors flex items-center"
+              >
+                Filmmakers
+                <ChevronDown size={16} className="ml-1" />
+              </button>
+              {activeDropdown === 'filmmakers' && (
+                <div className="absolute top-full left-0 mt-2 w-64 rounded-lg shadow-lg py-2 z-50" style={{backgroundColor: '#3f1b3f'}}>
+                  <button
+                    onClick={handleFilmmakerFormClick}
+                    className="w-full text-left px-4 py-2 hover:bg-black/20 transition-colors"
+                    style={{color: '#fda400'}}
+                  >
+                      <strong>Win a Filmmaker Membership! </strong>(at launch)
+                    </button>
+                </div>
+              )}
+            </div>
+
             <button 
               onClick={() => handleNavigation('compensation')}
               className="text-white hover:text-secondary transition-colors"
@@ -103,18 +154,49 @@ const Header = () => {
               >
                 About
               </button>
-              <button
-                onClick={() => handleNavigation('viewers')}
-                className="text-white hover:text-secondary transition-colors text-left"
-              >
-                Viewers
-              </button>
-              <button
-                onClick={() => handleNavigation('filmmakers')}
-                className="text-white hover:text-secondary transition-colors text-left"
-              >
-                Filmmakers
-              </button>
+              
+              {/* Mobile Viewers Dropdown */}
+              <div>
+                <button
+                  onClick={() => handleDropdownToggle('mobile-viewers')}
+                  className="text-white hover:text-secondary transition-colors text-left flex items-center"
+                >
+                  Viewers
+                  <ChevronDown size={16} className="ml-1" />
+                </button>
+                {activeDropdown === 'mobile-viewers' && (
+                  <div className="ml-4 mt-2">
+                    <button
+                      onClick={handleViewerFormClick}
+                      className="text-white hover:text-secondary transition-colors text-left"
+                    >
+                      Win a Filmmaker Membership (at launch)!
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Filmmakers Dropdown */}
+              <div>
+                <button
+                  onClick={() => handleDropdownToggle('mobile-filmmakers')}
+                  className="text-white hover:text-secondary transition-colors text-left flex items-center"
+                >
+                  Filmmakers
+                  <ChevronDown size={16} className="ml-1" />
+                </button>
+                {activeDropdown === 'mobile-filmmakers' && (
+                  <div className="ml-4 mt-2">
+                    <button
+                      onClick={handleFilmmakerFormClick}
+                      className="text-white hover:text-secondary transition-colors text-left"
+                    >
+                      Win a Filmmaker Membership (at launch)!
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <button
                 onClick={() => handleNavigation('compensation')}
                 className="text-white hover:text-secondary transition-colors text-left"
