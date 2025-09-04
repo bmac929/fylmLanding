@@ -30,7 +30,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pt-32 pb-16 lg:min-h-screen lg:flex lg:items-center">
+      <div className="container ml-20 px-4 pt-32 pb-16 lg:min-h-screen lg:flex lg:items-center">
         <div className="max-w-2xl animate-fade-up">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
             <span className="whitespace-nowrap">

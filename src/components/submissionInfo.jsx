@@ -64,9 +64,13 @@ export default function SubmissionInfo({ onNextStep }){
       setYear(event.target.value);
     }
 
-    const handleDuration = (event) =>{
-      setDuration(event.target.value);
-    }
+    const handleDuration = (event) => {
+      const value = event.target.value;
+      // Only allow numbers
+      if (value === '' || /^\d+$/.test(value)) {
+        setDuration(value);
+      }
+    };
     
     const handleDesc = (event) =>{
       setDescription(event.target.value);
@@ -141,7 +145,17 @@ export default function SubmissionInfo({ onNextStep }){
 
             <MDBCol size={2} style={{paddingLeft:"0px", display:"inline-block"}}>
             <p style={{fontSize:"18px", color:"white", marginBottom:"-.5%"}}>Duration<span style={{color:"red"}}>&nbsp;*</span></p>
-            <MDBInput required id='form1' type='text' placeholder="Minutes" value={duration} onChange={handleDuration} style={{backgroundColor:"#160016", color:"#fda400", paddingTop:"2%", paddingBottom:"2%", width:"100%",display:"inline-block"}}/>
+            <MDBInput 
+              required 
+              id='form1' 
+              type='number' 
+              placeholder="Minutes" 
+              value={duration} 
+              onChange={handleDuration} 
+              min="1"
+              max="9999"
+              style={{backgroundColor:"#160016", color:"#fda400", paddingTop:"2%", paddingBottom:"2%", width:"100%",display:"inline-block"}}
+            />
            
             </MDBCol>
             </div>

@@ -37,12 +37,6 @@ const Footer = () => {
               <div>
                 <h5 className="text-sm font-medium text-light/90 mb-2">For Viewers</h5>
                 <ul className="space-y-2">
-                  
-                  <li>
-                    <a href="#submit-idea" className="text-light/70 hover:text-secondary transition-colors">
-                      Submit a Film Idea
-                    </a>
-                  </li>
                   <li>
                     <a href="#viewer-membership" className="text-light/70 hover:text-secondary transition-colors font-medium">
                       Win a Viewer Membership <span className="text-light/50 text-sm">(at launch)!</span>
